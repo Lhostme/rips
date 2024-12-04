@@ -8,7 +8,7 @@ WORKDIR /app
 # COPY requirements.txt .
 
 # Install the dependencies
-RUN pip install moviepy
+RUN pip install opencv-python-headless
 
 # Copy the rest of your application code
 COPY . .
