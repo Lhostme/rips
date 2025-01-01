@@ -2,7 +2,12 @@ import time
 import os
 import cv2
 
-def main():
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/sample', methods=['POST'])
+def sample():
     print(os.listdir())
 
     files = os.listdir("/")
@@ -54,5 +59,7 @@ def main():
     print("done writing")
     print(os.listdir(volume))
 
+    return jsonify({"result":outputPath})
+
 if __name__ == "__main__":
-    main()
+    app.run(host='0.0.0.0', port=5000)

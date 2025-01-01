@@ -9,9 +9,12 @@ WORKDIR /app
 
 # Install the dependencies
 RUN pip install opencv-python-headless
+RUN pip install flask
 
 # Copy the rest of your application code
 COPY . .
+
+EXPOSE 5000
 
 # Run the application
 CMD ["python", "your_script.py"]
