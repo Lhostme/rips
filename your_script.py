@@ -44,9 +44,15 @@ def sample():
         if not ret:
             break
 
-        for arg in reqArgs:
-            if (arg == "topText" or arg == "bottomText" or arg == "centerText"):
-                putText(reqArgs[arg], frame, frameWidth, frameHeight, arg)
+        if (reqArgs["rgb"] and len(reqArgs["rgb"]) == 3): textColour = reqArgs["rgb"]
+        else: textColour = [255,255,255]
+        if ("topText" in reqArgs):
+            putText(reqArgs["topText"], frame, frameWidth, frameHeight, "topText", textColour)
+        if ("bottomText" in reqArgs):
+            putText(reqArgs["bottomText"], frame, frameWidth, frameHeight, "bottomText", textColour)
+        if ("centerText" in reqArgs):
+            putText(reqArgs["centerText"], frame, frameWidth, frameHeight, "centerText", textColour)
+
 
         # Write the frame to the output video
         output.write(frame)
@@ -60,13 +66,13 @@ def sample():
 
     return jsonify({"result":outputPath})
 
-def putText(text, frame, frameWidth, frameHeight, position):
+def putText(text, frame, frameWidth, frameHeight, position, textColour):
     # Add text to the frame
     if not text:
         text = "OpenCV Text Example"
     font = cv2.FONT_HERSHEY_SIMPLEX
     font_scale = 1
-    color = (0, 255, 0)  # Green
+    color = tuple(textColour)  # Green
     thickness = 1
     (text_width, text_height), baseline = cv2.getTextSize(text, font, font_scale, thickness)
     xVal = round(frameWidth / 2)
