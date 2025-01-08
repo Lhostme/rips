@@ -1,4 +1,3 @@
-import time
 import os
 import cv2
 
@@ -6,8 +5,8 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-@app.route('/sample', methods=['POST'])
-def sample():
+@app.route('/process', methods=['POST'])
+def process():
     print(os.listdir())
     reqArgs = request.get_json()
     print("args: ", reqArgs)
@@ -44,14 +43,18 @@ def sample():
         if not ret:
             break
 
+        textColour = [255,255,255]
+        thickness = 1
+        fontScale = 1
         if (reqArgs["rgb"] and len(reqArgs["rgb"]) == 3): textColour = reqArgs["rgb"]
-        else: textColour = [255,255,255]
+        if ("thickness" in reqArgs): thickness = reqArgs["thickness"]
+        if ("fontScale" in reqArgs): fontScale = reqArgs["fontScale"]
         if ("topText" in reqArgs):
-            putText(reqArgs["topText"], frame, frameWidth, frameHeight, "topText", textColour)
+            putText(reqArgs["topText"], frame, frameWidth, frameHeight, "topText", textColour, fontScale, thickness)
         if ("bottomText" in reqArgs):
-            putText(reqArgs["bottomText"], frame, frameWidth, frameHeight, "bottomText", textColour)
+            putText(reqArgs["bottomText"], frame, frameWidth, frameHeight, "bottomText", textColour, fontScale, thickness)
         if ("centerText" in reqArgs):
-            putText(reqArgs["centerText"], frame, frameWidth, frameHeight, "centerText", textColour)
+            putText(reqArgs["centerText"], frame, frameWidth, frameHeight, "centerText", textColour, fontScale, thickness)
 
 
         # Write the frame to the output video
@@ -66,15 +69,29 @@ def sample():
 
     return jsonify({"result":outputPath})
 
-def putText(text, frame, frameWidth, frameHeight, position, textColour):
+@app.route('/help', methods=['GET'])
+def help():
+    return jsonify({
+        "Add Text": {
+            "route": "/process",
+            "parameters": {
+                "bottomText":"Text at bottom center",
+                "topText":"Text at top center",
+                "centerText":"Text in center",
+                "textColour": "Array of 3 numbers representing rgb",
+                "thickness": "Width of the stroke used to create the text",
+                "fontScale": "Number from 0 to 1 to change relative size of text"
+            }
+        }
+    })
+
+def putText(text, frame, frameWidth, frameHeight, position, textColour, fontScale, thickness):
     # Add text to the frame
     if not text:
-        text = "OpenCV Text Example"
+        text = ""
     font = cv2.FONT_HERSHEY_SIMPLEX
-    font_scale = 1
-    color = tuple(textColour)  # Green
-    thickness = 1
-    (text_width, text_height), baseline = cv2.getTextSize(text, font, font_scale, thickness)
+    color = tuple(textColour)
+    (text_width, text_height), baseline = cv2.getTextSize(text, font, fontScale, thickness)
     xVal = round(frameWidth / 2)
     if position == "topText":
         position = (xVal - round(text_width / 2), text_height + 10)  # Coordinates (x, y) for the text
@@ -83,7 +100,7 @@ def putText(text, frame, frameWidth, frameHeight, position, textColour):
     else:
         yVal = round(frameHeight / 2)
         position = (xVal - round(text_width / 2), yVal) # Center text
-    cv2.putText(frame, text, position, font, font_scale, color, thickness)
+    cv2.putText(frame, text, position, font, fontScale, color, thickness)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
