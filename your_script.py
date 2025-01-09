@@ -82,8 +82,17 @@ def help():
                 "thickness": "Width of the stroke used to create the text",
                 "fontScale": "Number from 0 to 1 to change relative size of text"
             }
+        },
+        "List Files": {
+            "route": "/lsVolume"
         }
     })
+
+@app.route('/lsVolume', methods=['GET'])
+def lsVolume():
+    files = os.listdir("/")
+    volume = "/" + next((s for s in files if "vidData" in s), None)
+    return jsonify({"files": os.listdir(volume)})
 
 def putText(text, frame, frameWidth, frameHeight, position, textColour, fontScale, thickness):
     # Add text to the frame
