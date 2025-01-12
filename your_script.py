@@ -11,19 +11,20 @@ def process():
     reqArgs = request.get_json()
     print("args: ", reqArgs)
 
+    if (not "input" in reqArgs or not reqArgs["input"]): return jsonify({"error": "Input file required"})
+    if (not "output"in reqArgs or not reqArgs["output"]): return jsonify({"error": "Output file required"})
     files = os.listdir("/")
     volume = "/" + next((s for s in files if "vidData" in s), None)
     print("volume", volume)
 
     # Set video input/output location
-    inputPath = volume + "/vidtest.mp4"
-    outputPath = volume + "/result.mp4"
+    inputPath = volume + "/" + reqArgs["input"]
+    outputPath = volume + "/" + reqArgs["output"]
 
     # Open the input video
     capture = cv2.VideoCapture(inputPath)
     if not capture.isOpened():
-        print("Error: Could not open video file.")
-        exit()
+        return jsonify({"error": "Could not open video file"})
 
     # Get video properties
     frameWidth = int(capture.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -99,7 +100,7 @@ def putText(text, frame, frameWidth, frameHeight, position, textColour, fontScal
     if not text:
         text = ""
     font = cv2.FONT_HERSHEY_SIMPLEX
-    color = tuple(textColour)
+    color = (textColour[2], textColour[1], textColour[0])
     (text_width, text_height), baseline = cv2.getTextSize(text, font, fontScale, thickness)
     xVal = round(frameWidth / 2)
     if position == "topText":
