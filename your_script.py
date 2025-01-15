@@ -15,7 +15,18 @@ def process():
     if (not "output"in reqArgs or not reqArgs["output"]): return jsonify({"error": "Output file required"})
     files = os.listdir("/")
     volume = "/" + next((s for s in files if "vidData" in s), None)
-    print("volume", volume)
+    # print("volume", volume)
+
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(volume):
+        for file in filenames:
+            file_path = os.path.join(dirpath, file)
+            # Skip if it's a broken symlink
+            if not os.path.islink(file_path):
+                total_size += os.path.getsize(file_path)
+
+    if (total_size >= 5000000000):
+        return jsonify({"error":"Max storage space reached"})
 
     # Set video input/output location
     inputPath = volume + "/" + reqArgs["input"]
