@@ -2,6 +2,7 @@ import os
 import cv2
 
 from flask import Flask, request, jsonify
+from moviepy import VideoFileClip
 
 app = Flask(__name__)
 
@@ -75,6 +76,11 @@ def process():
     # Release resources
     capture.release()
     output.release()
+
+    if ("gifify" in reqArgs and reqArgs["gifify"] == True):
+        videoClip = VideoFileClip(outputPath)
+        outputPath = outputPath[:outputPath.find('.')] + ".gif"
+        videoClip.write_gif(outputPath)
 
     print("done writing")
     print(os.listdir(volume))

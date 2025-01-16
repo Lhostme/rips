@@ -10,6 +10,7 @@ WORKDIR /app
 # Install the dependencies
 RUN pip install opencv-python-headless
 RUN pip install flask
+RUN pip install moviepy
 
 # Copy the rest of your application code
 COPY . .
