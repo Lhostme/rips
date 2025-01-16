@@ -98,7 +98,8 @@ def help():
                 "centerText":"Text in center",
                 "textColour": "Array of 3 numbers representing rgb",
                 "thickness": "Width of the stroke used to create the text",
-                "fontScale": "Number from 0 to 1 to change relative size of text"
+                "fontScale": "Number from 0 to 1 to change relative size of text",
+                "gifify": "Set to bool true to convert output mp4 to gif"
             }
         },
         "List Files": {
