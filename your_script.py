@@ -85,7 +85,7 @@ def process():
     print("done writing")
     print(os.listdir(volume))
 
-    return jsonify({"result":outputPath})
+    return jsonify({"result": os.path.basename(outputPath)})
 
 @app.route('/help', methods=['GET'])
 def help():
